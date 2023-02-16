@@ -1,9 +1,7 @@
 package com.example.tutorialjpa;
 
-import com.example.tutorialjpa.domain.Comment;
-import com.example.tutorialjpa.domain.Socio;
-import com.example.tutorialjpa.domain.Tarjeta;
-import com.example.tutorialjpa.domain.Tutorial;
+import com.example.tutorialjpa.domain.*;
+import com.example.tutorialjpa.repository.PeliculaRepository;
 import com.example.tutorialjpa.repository.SocioRepository;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -12,8 +10,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.example.tutorialjpa.repository.TutorialRepository;
 import com.example.tutorialjpa.repository.SocioRepository;
 
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Period;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+
+import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
 
 @SpringBootTest
 class TutorialJpaApplicationTests {
@@ -23,6 +27,8 @@ class TutorialJpaApplicationTests {
     @Autowired
     SocioRepository socioRepository;
 
+    @Autowired
+    PeliculaRepository peliculaRepository;
     @Test
     void contextLoads() {
     }
@@ -97,5 +103,39 @@ class TutorialJpaApplicationTests {
         socioRepository.save(socio);
 
         List<Socio> socioList = socioRepository.findAll();
+    }
+
+    @Test
+    void testSaveOnePelicula() {
+
+        Pelicula pelicula = Pelicula.builder().titulo("Indiana Jones")
+                .descripcion("Película para toda la familia de aventura")
+                .anyoLanzamiento("1990")
+                .idioma("Español")
+                .idiomaOriginal("Inglés")
+                .duracion(Duration.parse("PT1H40M"))
+                .precioAlquiler(new BigDecimal("20.50"))
+                .periodoAlquiler(Period.of(0,1,15))
+                .clasificacion(Clasificacion.R)
+                .caracteristicasEspecialesStr("Trailers,Commentaries")
+                .ultimaModificacion(new Date())
+                .build();
+
+        peliculaRepository.save(pelicula);
+
+        List<Pelicula> peliculaList = peliculaRepository.findAll();
+
+        assertThat(peliculaList.get(0).getTitulo()).isEqualTo("Indiana Jones");
+
+        //Asserts de Duration
+        assertThat(peliculaList.get(0).getDuracion().toHours())
+                .isEqualTo(1L);
+        assertThat(peliculaList.get(0).getDuracion().toMinutesPart())
+                .isEqualTo(40L);
+
+         //Asserts de Period
+        assertThat(peliculaList.get(0).getPeriodoAlquiler().getMonths()).isEqualTo(1L);
+        assertThat(peliculaList.get(0).getPeriodoAlquiler().getDays()).isEqualTo(15L);
+
     }
 }
