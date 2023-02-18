@@ -30,7 +30,6 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name="id_tutorial", nullable= false, foreignKey = @ForeignKey(name ="FK_TUTORIAL"))
-
     //Para romper el bucle de la relacion bidireccional
     @JsonIgnore
     @ToString.Exclude

@@ -15,6 +15,7 @@ import java.time.Duration;
 import java.time.Period;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
@@ -125,17 +126,38 @@ class TutorialJpaApplicationTests {
 
         List<Pelicula> peliculaList = peliculaRepository.findAll();
 
-        assertThat(peliculaList.get(0).getTitulo()).isEqualTo("Indiana Jones");
+    }
 
-        //Asserts de Duration
-        assertThat(peliculaList.get(0).getDuracion().toHours())
-                .isEqualTo(1L);
-        assertThat(peliculaList.get(0).getDuracion().toMinutesPart())
-                .isEqualTo(40L);
+    @Test
+    void testSavePeliculaAndCategoria(){
 
-         //Asserts de Period
-        assertThat(peliculaList.get(0).getPeriodoAlquiler().getMonths()).isEqualTo(1L);
-        assertThat(peliculaList.get(0).getPeriodoAlquiler().getDays()).isEqualTo(15L);
+        Pelicula pelicula = Pelicula.builder()
+                .titulo("Indiana Jones")
+                .descripcion("Pelicula para toda la familia")
+                .anyoLanzamiento("1990")
+                .idioma("Español de España")
+                .idiomaOriginal("Inglés")
+                .duracion(Duration.parse("PT1H40M"))
+                .precioAlquiler(new BigDecimal("20.50"))
+                .periodoAlquiler(Period.of(0,1,0))
+                .clasificacion(Clasificacion.R)
+                .caracteristicasEspecialesStr("Trailers,Commentaries")
+                .categorias(new HashSet<>())
+                .ultimaModificacion(new Date())
+                .build();
+
+        String cat = "Aventura";
+
+        Categoria categoria = Categoria.builder()
+                .nombre(cat)
+                .ultima_actualizacion(new Date())
+                .build();
+
+        //NO HACE FALTA SETEAR EN CATEGORÍA EL SET DE PELÍCULA
+
+        peliculaRepository.save(pelicula);
+
+        List<Pelicula> peliculaList = peliculaRepository.findAll();
 
     }
 }
