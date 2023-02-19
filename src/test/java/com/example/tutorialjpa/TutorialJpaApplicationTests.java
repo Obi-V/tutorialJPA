@@ -1,13 +1,11 @@
 package com.example.tutorialjpa;
 
 import com.example.tutorialjpa.domain.*;
-import com.example.tutorialjpa.repository.PeliculaRepository;
-import com.example.tutorialjpa.repository.SocioRepository;
+import com.example.tutorialjpa.repository.*;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.example.tutorialjpa.repository.TutorialRepository;
 import com.example.tutorialjpa.repository.SocioRepository;
 
 import java.math.BigDecimal;
@@ -30,6 +28,12 @@ class TutorialJpaApplicationTests {
 
     @Autowired
     PeliculaRepository peliculaRepository;
+
+    @Autowired
+    PersonRepository personRepository;
+
+
+
     @Test
     void contextLoads() {
     }
@@ -126,7 +130,8 @@ class TutorialJpaApplicationTests {
 
         List<Pelicula> peliculaList = peliculaRepository.findAll();
 
-    }
+
+   }
 
     @Test
     void testSavePeliculaAndCategoria(){
@@ -159,5 +164,51 @@ class TutorialJpaApplicationTests {
 
         List<Pelicula> peliculaList = peliculaRepository.findAll();
 
+    }
+
+    @Test
+    public void personElementCollectionStringAndAddressEmbeddable() {
+
+        Person person = Person.builder().name("Pablo Marmol")
+                .phoneNumbers(new HashSet<>())
+                .addresses(new HashSet<>())
+                .build();
+
+        Address mainAddress = Address.builder()
+                .houseNumber(2)
+                .street("Cazorla")
+                .city("Granada")
+                .zip_code(29123)
+                .build();
+
+        Address address1 = Address.builder()
+                .houseNumber(23)
+                .street("Portugal")
+                .city("Málaga")
+                .zip_code(29845)
+                .build();
+
+        Address address2 = Address.builder()
+                .houseNumber(32)
+                .street("Roma")
+                .city("Fuengirola")
+                .zip_code(29845)
+                .build();
+
+        person.setMainAddress(mainAddress);
+
+        person.getAddresses().add(address1);
+
+        person.getAddresses().add(address2);
+
+        person.getPhoneNumbers().add("948772716");
+
+        person.getPhoneNumbers().add("983716152");
+
+        personRepository.save(person);
+
+       /* Person personSaved = personRepository.findById(person.getId()).get();
+
+        assertThat(personSaved.getAddresses()).contains(address1, address2);*/
     }
 }
